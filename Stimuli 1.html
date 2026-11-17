@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missing-Middle Storyboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE clinical research stimulus: calm, neutral, unbranded, greyscale like the other card sets
+   IDEA a printed three-panel storyboard pinned to a wall, with sticky notes added by hand
+   PICTURE the board itself: visit, blank weeks 1-12 with a week ruler, next visit; notes are the only colour
+   COLOUR paper white frames on a light grey wall, ink near-black, greys; note yellow, green, red
+   TYPE Atkinson Hyperlegible for everything (made for legibility on screen share)
+   LAYOUT slim prompt + note buttons across the top, board full width beneath, moderator controls folded below; board scrolls sideways under 900px */
+:root{color-scheme:light dark;--bg:light-dark(#e9e9e7,#1b1b1a);--ink:light-dark(#161616,#ececea);--mute:light-dark(#5f5f5c,#a9a9a5);--line:light-dark(#c9c9c5,#3c3c3a);--panel:light-dark(#ffffff,#262625);--paper:#ffffff;--pink:#161616;--y:#ffe27a;--g:#b9e4ae;--r:#f5a397}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 "Atkinson Hyperlegible",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:1320px;margin:0 auto;padding:18px max(2.5vw,16px) 40px}
+.top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+h1{font-size:15px;font-weight:700;margin:0 0 4px;color:var(--mute)}
+.prompt{font-size:clamp(20px,2.2vw,28px);line-height:1.15;font-weight:700;margin:0;max-width:34ch;text-wrap:balance}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button,.seg label{font:inherit;font-size:15px;min-height:44px;border-radius:8px;cursor:pointer}
+button{border:1.5px solid var(--ink);background:var(--panel);color:var(--ink);padding:8px 14px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,.seg input:focus-visible+span{outline:3px solid #4a7fd6;outline-offset:2px}
+button.add{display:inline-flex;align-items:center;gap:8px;color:#161616;border-color:#161616;font-weight:700}
+button.add i{width:16px;height:16px;border-radius:3px;border:1.5px solid #161616;display:inline-block}
+.add.y{background:var(--y)}.add.g{background:var(--g)}.add.r{background:var(--r)}
+.add.dim{opacity:.55;font-weight:400}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:9px;overflow:hidden}
+.seg label{display:flex;border-radius:0;min-height:42px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{padding:9px 14px;display:flex;align-items:center}
+.seg input:checked+span{background:var(--ink);color:var(--bg)}
+.scroll{overflow-x:auto;padding-bottom:6px}
+.board{position:relative;min-width:900px;height:min(62vh,560px);min-height:440px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.4fr) minmax(0,1fr);gap:14px}
+.frame{background:var(--paper);color:#161616;border:2px solid #222;border-radius:6px;display:flex;flex-direction:column;overflow:hidden}
+.fh{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1.5px solid #222;font-weight:700;font-size:15px;background:#f3f3f1}
+.fh small{font-weight:400;color:#555;font-size:13px}
+.art{flex:1;display:flex;align-items:center;justify-content:center;padding:10px}
+.art svg{width:100%;max-height:170px}
+.cap{padding:10px 12px 14px;font-size:15px;line-height:1.4;border-top:1px dashed #bbb}
+.cap p{margin:0 0 4px}
+.ph{border-bottom:1.5px dashed #777;color:#444;white-space:nowrap}
+.ph.set{border:0;color:#161616;font-weight:700}
+.mid{position:relative;flex:1;background:repeating-linear-gradient(90deg,transparent 0 calc(100%/12 - 1px),#e4e4e1 calc(100%/12 - 1px) calc(100%/12))}
+.hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9a9a96;font-size:15px;pointer-events:none;text-align:center;padding:20px}
+.hint[hidden]{display:none}
+.ruler{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));border-top:1.5px solid #222;background:#f3f3f1}
+.ruler span{text-align:center;font-size:13px;padding:6px 0;color:#444;border-left:1px solid #d6d6d2}
+.ruler span:first-child{border-left:0}
+.notes{position:absolute;inset:0;pointer-events:none}
+.note{position:absolute;width:150px;pointer-events:auto;border:1.5px solid #161616;border-radius:3px;color:#161616;box-shadow:0 2px 0 rgba(0,0,0,.18);display:flex;flex-direction:column}
+.note.y{background:var(--y)}.note.g{background:var(--g)}.note.r{background:var(--r)}
+.nh{display:flex;align-items:center;gap:6px;padding:3px 4px 2px 8px;font-size:13px;cursor:grab;touch-action:none;user-select:none}
+.nh b{flex:1;font-size:13px}
+.nh button{min-height:28px;width:28px;padding:0;border:0;background:transparent;color:#161616;font-size:18px;line-height:1}
+.note.drag{box-shadow:0 8px 18px rgba(0,0,0,.28);z-index:5}.note.drag .nh{cursor:grabbing}
+.note textarea{font:16px/1.3 "Atkinson Hyperlegible",system-ui,sans-serif;border:0;background:transparent;color:#161616;resize:none;padding:2px 8px 4px;min-height:64px;outline-offset:-3px}
+.nf{font-size:13px;color:#3d3d3a;padding:0 8px 4px;display:flex;justify-content:space-between}
+details{margin-top:18px;background:var(--panel);border:1.5px solid var(--line);border-radius:10px;padding:0 16px}
+summary{cursor:pointer;font-weight:700;padding:12px 0;min-height:44px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:12px 16px;padding-bottom:14px}
+.field label{display:block;font-size:13px;color:var(--mute);margin-bottom:3px}
+.field input{width:100%;font:16px "Atkinson Hyperlegible",system-ui,sans-serif;padding:9px 10px;border:1.5px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);min-height:44px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-bottom:14px}
+.tally{color:var(--mute);font-size:15px}
+#csv{width:100%;min-height:120px;font:13px/1.4 ui-monospace,Menlo,monospace;border:1.5px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);padding:8px;margin-bottom:14px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 10px 8px 16px;border-radius:10px;display:flex;gap:12px;align-items:center;font-size:15px;z-index:20}
+.toast[hidden]{display:none}
+.toast button{min-height:36px;border-color:var(--bg);background:transparent;color:var(--bg)}
+.foot{font-size:13px;color:var(--mute);margin-top:10px}
+@media (prefers-reduced-motion:no-preference){.note{transition:box-shadow .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1 id="passLabel">Pass 1 of 2: what happens today</h1>
+      <p class="prompt" id="prompt">What actually happens between these two visits today?</p>
+    </div>
+    <div class="tools">
+      <button class="add y" id="addY" type="button"><i></i>Add: what happens today</button>
+      <button class="add g" id="addG" type="button"><i></i>Add: ideal world</button>
+      <button class="add r" id="addR" type="button"><i></i>Mark: hardest point</button>
+    </div>
+  </div>
+
+  <div class="scroll">
+    <div class="board" id="board">
+      <section class="frame" id="f1">
+        <div class="fh">1 · Today's visit <small>Week 0</small></div>
+        <div class="art"><svg viewBox="0 0 220 130" aria-label="A clinician and a patient at a visit" role="img">
+          <g fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="10" y1="112" x2="210" y2="112"/>
+            <rect x="88" y="78" width="60" height="6" fill="#e6e6e3"/><line x1="96" y1="84" x2="96" y2="112"/><line x1="140" y1="84" x2="140" y2="112"/>
+            <circle cx="52" cy="34" r="12" fill="#fff"/><path d="M34 112V66q0-16 18-16t18 16v46" fill="#d9d9d6"/><rect x="66" y="64" width="16" height="22" rx="2" fill="#fff"/>
+            <circle cx="176" cy="44" r="12" fill="#fff"/><path d="M160 112V92h-6V76q0-16 22-16t20 16v36" fill="#bdbdb9"/>
+            <rect x="110" y="62" width="14" height="16" rx="2" fill="#fff"/><line x1="108" y1="62" x2="126" y2="62"/><line x1="114" y1="70" x2="120" y2="70"/>
+          </g></svg></div>
+        <div class="cap">
+          <p><span class="ph" data-k="name">[Patient name]</span>, <span class="ph" data-k="age">[age]</span></p>
+          <p>Type 2 diabetes, not on insulin</p>
+          <p>A1c <span class="ph" data-k="a1c0">[A1c]</span>%</p>
+          <p>You add <span class="ph" data-k="med">[new medication]</span>.</p>
+        </div>
+      </section>
+      <section class="frame" id="f2">
+        <div class="fh">2 · Weeks 1–12 <small>Between visits</small></div>
+        <div class="mid"><div class="hint" id="hint">Add notes anywhere in these weeks</div></div>
+        <div class="ruler" id="ruler"></div>
+      </section>
+      <section class="frame" id="f3">
+        <div class="fh">3 · Next visit <small>About week 12</small></div>
+        <div class="art"><svg viewBox="0 0 220 130" aria-label="A lab result sheet at the next visit" role="img">
+          <g fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="10" y1="112" x2="210" y2="112"/>
+            <rect x="70" y="14" width="80" height="98" rx="4" fill="#fff"/><rect x="92" y="8" width="36" height="12" rx="3" fill="#d9d9d6"/>
+            <line x1="82" y1="36" x2="138" y2="36"/><line x1="82" y1="50" x2="124" y2="50"/><line x1="82" y1="64" x2="132" y2="64"/>
+            <rect x="82" y="76" width="56" height="24" rx="2" fill="#e6e6e3"/>
+          </g></svg></div>
+        <div class="cap">
+          <p>Same patient returns</p>
+          <p>New A1c <span class="ph" data-k="a1c1">[new A1c]</span>%</p>
+        </div>
+      </section>
+      <div class="notes" id="notes"></div>
+    </div>
+  </div>
+
+  <details id="mod">
+    <summary>Moderator controls</summary>
+    <div class="row">
+      <div class="seg" role="radiogroup" aria-label="Pass">
+        <label><input type="radio" name="pass" value="today" id="passToday" checked><span>Pass 1: Today</span></label>
+        <label><input type="radio" name="pass" value="ideal" id="passIdeal"><span>Pass 2: Ideal world</span></label>
+      </div>
+      <div class="seg" role="radiogroup" aria-label="Who is typing">
+        <label><input type="radio" name="by" value="PCP" id="byPCP" checked><span>Typing: PCP</span></label>
+        <label><input type="radio" name="by" value="Moderator" id="byMod"><span>Typing: Moderator</span></label>
+      </div>
+      <span class="tally" id="tally"></span>
+    </div>
+    <div class="grid">
+      <div class="field"><label for="pid">Participant ID</label><input id="pid" placeholder="e.g. PCP-04"></div>
+      <div class="field"><label for="pt-name">Patient name</label><input id="pt-name" data-k="name"></div>
+      <div class="field"><label for="pt-age">Age</label><input id="pt-age" data-k="age" inputmode="numeric"></div>
+      <div class="field"><label for="pt-a1c0">Starting A1c (%)</label><input id="pt-a1c0" data-k="a1c0" inputmode="decimal"></div>
+      <div class="field"><label for="pt-med">New medication</label><input id="pt-med" data-k="med"></div>
+      <div class="field"><label for="pt-a1c1">New A1c at next visit (%)</label><input id="pt-a1c1" data-k="a1c1" inputmode="decimal"></div>
+    </div>
+    <div class="row">
+      <button type="button" id="dl">Download CSV</button>
+      <button type="button" id="copy">Copy CSV</button>
+      <button type="button" id="clear">Clear notes for next participant</button>
+    </div>
+    <textarea id="csv" readonly aria-label="CSV of all notes"></textarea>
+  </details>
+  <p class="foot">Notes save in this browser only. Export the CSV at the end of each interview. Approximate week is worked out from where a note sits on the Weeks 1–12 frame.</p>
+</div>
+<div class="toast" id="toast" hidden><span id="toastMsg"></span><button type="button" id="undo">Undo</button></div>
+
+<script>
+{
+const KEY = 'orange-missing-middle-v1';
+const KINDS = {
+  y: {label: 'Today', meaning: 'What happens today'},
+  g: {label: 'Ideal', meaning: 'Ideal world'},
+  r: {label: 'Hardest', meaning: 'Hardest point'}
+};
+const PH = {name: '[Patient name]', age: '[age]', a1c0: '[A1c]', med: '[new medication]', a1c1: '[new A1c]'};
+const PROMPTS = {
+  today: ['Pass 1 of 2: what happens today', 'What actually happens between these two visits today?'],
+  ideal: ['Pass 2 of 2: ideal world','In an ideal world, if you had the time and resources, what should these weeks look like?']
+};
+const $ = id => document.getElementById(id);
+const board = $('board'), layer = $('notes');
+let S = {pid: '', by: 'PCP', pass: 'today', pt: {name: '', age: '', a1c0: '', med: '', a1c1: ''}, notes: [], seq: 0};
+let lastDeleted = null, toastTimer = 0, downloads = null;
+
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} updateTally(); };
+const now = () => new Date().toISOString();
+
+function frameOf(n) {
+  const b = board.getBoundingClientRect();
+  const cx = b.left + (n.x / 100) * b.width + 75, cy = b.top + (n.y / 100) * b.height + 40;
+  for (const id of ['f1', 'f2', 'f3']) {
+    const r = $(id).getBoundingClientRect();
+    if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) {
+      if (id === 'f2') {
+        const mid = $('f2').querySelector('.mid').getBoundingClientRect();
+        const wk = Math.min(12, Math.max(1, Math.ceil(((cx - mid.left) / mid.width) * 12)));
+        return {frame: 'Weeks 1-12', week: wk};
+      }
+      return {frame: id === 'f1' ? 'Today\'s visit' : 'Next visit', week: id === 'f1' ? 0 : 12};
+    }
+  }
+  return {frame: 'Outside frames', week: ''};
+}
+
+function footText(n) {
+  if (!n.moved) return 'Drag to a week';
+  const f = frameOf(n);
+  return f.frame === 'Weeks 1-12' ? 'about week ' + f.week : f.frame;
+}
+
+function render() {
+  layer.innerHTML = S.notes.map(n => `
+    <div class="note ${n.c}" data-id="${n.id}" style="left:${n.x}%;top:${n.y}%">
+      <div class="nh"><b>${KINDS[n.c].label}</b><span>${n.by === 'Moderator' ? 'Mod' : ''}</span><button type="button" class="del" aria-label="Delete note">×</button></div>
+      <textarea aria-label="${KINDS[n.c].meaning} note" placeholder="Type here">${esc(n.text)}</textarea>
+      <div class="nf"><span class="wk">${footText(n)}</span></div>
+    </div>`).join('');
+  $('hint').hidden = S.notes.length > 0;
+  updateTally();
+}
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[ch]));
+
+function updateTally() {
+  const c = k => S.notes.filter(n => n.c === k).length;
+  $('tally').textContent = `${c('y')} today · ${c('g')} ideal · ${c('r')} hardest`;
+}
+
+function addNote(c) {
+  const b = board.getBoundingClientRect(), mid = $('f2').querySelector('.mid').getBoundingClientRect();
+  const W = 156, H = 124;
+  const taken = [...layer.querySelectorAll('.note')].map(el => el.getBoundingClientRect());
+  const free = (x, y) => !taken.some(r => x < r.right - b.left && x + W > r.left - b.left && y < r.bottom - b.top && y + H > r.top - b.top);
+  const cols = Math.max(1, Math.floor((mid.width - 12) / (W + 6))), rows = Math.max(1, Math.floor((mid.height - 8) / (H + 4)));
+  let px = mid.left - b.left + 10, py = mid.top - b.top + 8, found = false;
+  for (let r = 0; r < rows && !found; r++) for (let k = 0; k < cols && !found; k++) {
+    const x = mid.left - b.left + 10 + k * (W + 6), y = mid.top - b.top + 8 + r * (H + 4);
+    if (free(x, y)) { px = x; py = y; found = true; }
+  }
+  if (!found) { px += (S.notes.length % 8) * 18; py += (S.notes.length % 8) * 14; }
+  const n = {id: ++S.seq, c, text: '', by: S.by, x: px / b.width * 100, y: py / b.height * 100, created: now(), edited: ''};
+  S.notes.push(n); save(); render();
+  layer.querySelector(`[data-id="${n.id}"] textarea`)?.focus();
+}
+
+function applyPatient() {
+  document.querySelectorAll('.ph').forEach(el => {
+    const v = (S.pt[el.dataset.k] || '').trim();
+    el.textContent = v || PH[el.dataset.k];
+    el.classList.toggle('set', !!v);
+  });
+}
+
+function applyPass() {
+  const [lbl, txt] = PROMPTS[S.pass];
+  $('passLabel').textContent = lbl; $('prompt').textContent = txt;
+  $('addY').classList.toggle('dim', S.pass !== 'today');
+  $('addG').classList.toggle('dim', S.pass !== 'ideal');
+  $('passToday').checked = S.pass === 'today'; $('passIdeal').checked = S.pass === 'ideal';
+}
+
+function toCSV() {
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const head = ['participant_id', 'note_no', 'color', 'meaning', 'text', 'added_by', 'frame', 'approx_week', 'x_pct', 'y_pct', 'created', 'last_edited'];
+  const rows = [...S.notes].sort((a, b) => a.id - b.id).map(n => {
+    const f = n.moved ? frameOf(n) : {frame: 'Not placed', week: ''};
+    return [S.pid, n.id, {y: 'yellow', g: 'green', r: 'red'}[n.c], KINDS[n.c].meaning, n.text, n.by, f.frame, f.week, n.x.toFixed(1), n.y.toFixed(1), n.created, n.edited];
+  });
+  return [head, ...rows].map(r => r.map(q).join(',')).join('\n');
+}
+
+function toast(msg, undoable) {
+  $('toastMsg').textContent = msg; $('undo').hidden = !undoable; $('toast').hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { $('toast').hidden = true; }, 6000);
+}
+
+/* note interactions */
+layer.addEventListener('input', e => {
+  const el = e.target.closest('.note'); if (!el || e.target.tagName !== 'TEXTAREA') return;
+  const n = S.notes.find(x => x.id == el.dataset.id); n.text = e.target.value; n.edited = now(); save();
+});
+layer.addEventListener('click', e => {
+  if (!e.target.classList.contains('del')) return;
+  const id = +e.target.closest('.note').dataset.id, i = S.notes.findIndex(x => x.id === id);
+  lastDeleted = {n: S.notes[i], i}; S.notes.splice(i, 1); save(); render(); toast('Note deleted', true);
+});
+layer.addEventListener('pointerdown', e => {
+  const h = e.target.closest('.nh'); if (!h || e.target.closest('button')) return;
+  const el = h.parentElement, n = S.notes.find(x => x.id == el.dataset.id);
+  const b = board.getBoundingClientRect(), r = el.getBoundingClientRect();
+  const ox = e.clientX - r.left, oy = e.clientY - r.top;
+  el.classList.add('drag'); h.setPointerCapture(e.pointerId); layer.appendChild(el);
+  const sx = e.clientX, sy = e.clientY;
+  const move = ev => {
+    if (Math.abs(ev.clientX - sx) + Math.abs(ev.clientY - sy) > 4) n.moved = true;
+    const maxX = 100 - el.offsetWidth / b.width * 100, maxY = 100 - el.offsetHeight / b.height * 100;
+    n.x = Math.min(maxX, Math.max(0, (ev.clientX - b.left - ox) / b.width * 100));
+    n.y = Math.min(maxY, Math.max(0, (ev.clientY - b.top - oy) / b.height * 100));
+    el.style.left = n.x + '%'; el.style.top = n.y + '%';
+    el.querySelector('.wk').textContent = footText(n);
+  };
+  const up = () => {
+    el.classList.remove('drag'); h.removeEventListener('pointermove', move); h.removeEventListener('pointerup', up);
+    S.notes = S.notes.filter(x => x !== n).concat(n); n.edited = now(); save();
+  };
+  h.addEventListener('pointermove', move); h.addEventListener('pointerup', up);
+});
+
+/* toolbar + moderator */
+$('addY').onclick = () => addNote('y');
+$('addG').onclick = () => addNote('g');
+$('addR').onclick = () => addNote('r');
+document.querySelectorAll('input[name=pass]').forEach(el => el.onchange = () => { S.pass = el.value; save(); applyPass(); });
+document.querySelectorAll('input[name=by]').forEach(el => el.onchange = () => { S.by = el.value; save(); });
+$('pid').oninput = e => { S.pid = e.target.value; save(); };
+document.querySelectorAll('.field input[data-k]').forEach(el => el.oninput = () => { S.pt[el.dataset.k] = el.value; save(); applyPatient(); });
+$('undo').onclick = () => {
+  if (!lastDeleted) return;
+  S.notes.splice(lastDeleted.i, 0, lastDeleted.n); lastDeleted = null; save(); render(); $('toast').hidden = true;
+};
+$('copy').onclick = async () => {
+  const csv = toCSV(); $('csv').value = csv;
+  try { await navigator.clipboard.writeText(csv); toast('CSV copied', false); }
+  catch (e) { $('csv').select(); toast('Select the text below and copy it', false); }
+};
+$('dl').onclick = async () => {
+  const csv = toCSV(); $('csv').value = csv;
+  const name = `storyboard_${(S.pid || 'participant').replace(/[^\w-]+/g, '_')}.csv`;
+  if (downloads) {
+    try { await downloads.save({filename: name, data: csv}); return; } catch (e) { toast('Download was not saved. Use Copy CSV instead.', false); return; }
+  }
+  try {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  } catch (e) {}
+  toast('If nothing downloaded, use Copy CSV', false);
+};
+let armed = 0;
+$('clear').onclick = () => {
+  if (!armed) { $('clear').textContent = 'Click again to clear all notes'; armed = setTimeout(() => { armed = 0; $('clear').textContent = 'Clear notes for next participant'; }, 3500); return; }
+  clearTimeout(armed); armed = 0; $('clear').textContent = 'Clear notes for next participant';
+  S.notes = []; S.pid = ''; S.pass = 'today'; $('pid').value = ''; $('csv').value = ''; save(); render(); applyPass(); toast('Board cleared', false);
+};
+
+$('ruler').innerHTML = Array.from({length: 12}, (_, i) => `<span>Wk ${i + 1}</span>`).join('');
+new ResizeObserver(() => layer.querySelectorAll('.note').forEach(el => {
+  const n = S.notes.find(x => x.id == el.dataset.id); if (n) el.querySelector('.wk').textContent = footText(n);
+})).observe(board);
+
+function start(data) {
+  try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) S = Object.assign(S, saved); } catch (e) {}
+  if (data && data.notes) S = Object.assign(S, data);
+  $('pid').value = S.pid;
+  document.querySelectorAll('.field input[data-k]').forEach(el => { el.value = S.pt[el.dataset.k] || ''; });
+  $(S.by === 'Moderator' ? 'byMod' : 'byPCP').checked = true;
+  applyPatient(); applyPass(); render();
+}
+window.claude?.hot?.snapshot?.(() => S);
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+(async () => { try { downloads = await window.claude?.use?.('downloads'); } catch (e) { downloads = null; } })();
+}
+</script>
+</body>
+</html>
